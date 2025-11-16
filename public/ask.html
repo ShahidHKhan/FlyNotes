@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ask FlyNotes</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("Please log in first.");
+        location.href = "login.html";
+      } else {
+        currentUser = user;
+      }
+    });
+
+    window.ask = async function () {
+      const input = document.getElementById("question").value;
+      if (!input) return alert("Enter a question");
+
+      const token = await currentUser.getIdToken();
+
+      const res = await fetch("http://localhost:3000/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ input })
+      });
+
+      const data = await res.json();
+
+      document.getElementById("answer").innerText = data.answer || "No answer.";
+    };
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Ask Your Notes</h2>
+
+    <input id="question" placeholder="Ask something..." />
+
+    <button onclick="ask()">Ask</button>
+
+    <h3>Answer:</h3>
+    <p id="answer"></p>
+
+    <button onclick="location.href='index.html'" style="margin-top:20px;background:#555;">
+      ⬅ Back to Home
+    </button>
+  </div>
+</body>
+</html>

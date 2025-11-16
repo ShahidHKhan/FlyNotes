@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function() {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      try {
+        const user = await signInWithEmailAndPassword(auth, email, pass);
+        const token = await user.user.getIdToken();
+
+        localStorage.setItem("token", token);
+        alert("Logged in!");
+
+        // ⬅ FIXED: Redirect to protected home page
+        location.href = "home.html";
+
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+  </script>
+</head>
+
+<body>
+<div class="container">
+  <h2>Log In</h2>
+
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+
+  <button onclick="login()">Log In</button>
+
+  <button onclick="location.href='signup.html'" style="margin-top:20px;">
+    Create Account
+  </button>
+
+  <button onclick="location.href='index.html'" style="margin-top:20px;background:#555;">
+    ⬅ Back
+  </button>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.signup = async function() {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+        alert("Signup successful!");
+        location.href = "login.html";
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+  </script>
+</head>
+
+<body>
+<div class="container">
+  <h2>Create Account</h2>
+
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  
+  <button onclick="signup()">Sign Up</button>
+
+  <button onclick="location.href='index.html'" style="margin-top:20px;background:#555;">
+    ⬅ Back to Home
+  </button>
+</div>
+</body>
+</html>

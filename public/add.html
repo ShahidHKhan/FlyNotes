@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Note</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("Please log in first.");
+        location.href = "login.html";
+      } else {
+        currentUser = user;
+      }
+    });
+
+    window.saveNote = async function () {
+      const note = document.getElementById("note").value;
+      if (!note) return alert("Please enter a note.");
+
+      const token = await currentUser.getIdToken();
+
+      const res = await fetch("http://localhost:3000/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ note })
+      });
+
+      const data = await res.json();
+      alert("Saved!");
+    };
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Add Note</h2>
+
+    <textarea id="note" placeholder="Write a note..."></textarea>
+
+    <button onclick="saveNote()">Save Note</button>
+
+    <button onclick="location.href='index.html'" style="margin-top:20px;background:#555;">
+      ⬅ Back to Home
+    </button>
+  </div>
+</body>
+</html>

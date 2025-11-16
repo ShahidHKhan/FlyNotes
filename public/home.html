@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FlyNotes Home</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Protect this page
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        location.href = "login.html";
+      }
+    });
+
+    window.logout = function () {
+      signOut(auth);
+    };
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Welcome to FlyNotes</h2>
+
+    <button onclick="location.href='add.html'">Add Note</button>
+    <button onclick="location.href='ask.html'">Ask Notes</button>
+
+    <button onclick="logout()" style="background:#c33; margin-top:20px;">
+      Logout
+    </button>
+  </div>
+</body>
+</html>
